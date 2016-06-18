@@ -1,0 +1,35 @@
+{
+  "env": {
+    "commonjs": {
+      "presets": [
+        "es2015",
+        "stage-0"
+      ]
+    },
+    "es": {
+      "presets": [
+        "es2015-rollup",
+        "stage-0"
+      ]
+    },
+    "production": {
+      "comments": false,
+      "plugins": [
+      ],
+      "presets": [
+        "es2015",
+        "stage-0"
+      ]
+    },
+    "test": {
+      "comments": false,
+      "plugins": [
+        "__coverage__"
+      ],
+      "presets": [
+        "es2015",
+        "stage-0"
+      ]
+    }
+  }
+}
