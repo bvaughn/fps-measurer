@@ -9,7 +9,7 @@ npm install --save-dev fps-measurer
 ```
 UMD build:
 ```html
-<script src="https://npmcdn.com/fps-measurer"></script>
+<script src="https://npmcdn.com/fps-measurer/dist/umd/fps-measurer.js"></script>
 ```
 ### Usage
 ```js
