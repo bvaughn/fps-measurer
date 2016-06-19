@@ -13,6 +13,8 @@ UMD build:
 ```
 ### Usage
 ```js
+import { TestRunner } from './TestRunner'
+
 function yourTestCase (callback) {
   // Your test case goes here...
   // When it's done, invoke callback()
