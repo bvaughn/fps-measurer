@@ -58,9 +58,9 @@ export class TestRunner {
     const framerate = calculateMean(this._framerates)
 
     console.log('TestRunner: complete')
-    console.log(`• ${this._framerates.length} measurements`)
-    console.log(`• mean framerate: ${this._format(framerate)} fps`)
-    console.log(`• mean duration: ${this._format(duration)} seconds`)
+    console.log(`+ ${this._framerates.length} measurements`)
+    console.log(`+ mean framerate: ${this._format(framerate)} fps`)
+    console.log(`+ mean duration: ${this._format(duration)} seconds`)
 
     return {
       duration,
@@ -94,8 +94,8 @@ export class TestRunner {
     const measurements = this._framerateMeasurer.stop()
 
     console.log(`TestRunner: test ${this._framerates.length}`)
-    console.log(`• framerate: ${this._format(measurements.framerate)} fps`)
-    console.log(`• duration: ${this._format(measurements.duration)} seconds`)
+    console.log(`+ framerate: ${this._format(measurements.framerate)} fps`)
+    console.log(`+ duration: ${this._format(measurements.duration)} seconds`)
 
     this._durations.push(measurements.duration)
     this._framerates.push(measurements.framerate)
