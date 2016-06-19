@@ -18,34 +18,54 @@ export class TestRunner {
     this._onTestComplete = this._onTestComplete.bind(this)
   }
 
-  start () {
-    this.isRunning = true
+  isRunning () {
+    return !!this._resolvePromise
+  }
+
+  start (completeCallback) {
+    if (this.isRunning()) {
+      return Promise.reject('Already running')
+    }
+
+    this._completeCallback = completeCallback
     this._durations = []
     this._framerates = []
 
-    this._runTest()
+    return new Promise((resolve, reject) => {
+      this._rejectPromise = reject
+      this._resolvePromise = resolve
+      this._runTest()
+    })
   }
 
   stop () {
-    this.isRunning = false
+    if (!this.isRunning()) {
+      throw Error('Not running')
+    }
 
+    this._rejectPromise = null
+    this._resolvePromise = null
+
+    return this._getCompletedData()
+  }
+
+  _format (number) {
+    return Math.round(number * 100) / 100
+  }
+
+  _getCompletedData () {
     const duration = calculateMean(this._durations)
     const framerate = calculateMean(this._framerates)
 
-    console.group('TestRunner: complete')
-    console.log(`${this._framerates.length} measurements`)
-    console.log(`mean framerate: ${this._format(framerate)} fps`)
-    console.log(`mean duration: ${this._format(duration)} seconds`)
-    console.groupEnd()
+    console.log('TestRunner: complete')
+    console.log(`• ${this._framerates.length} measurements`)
+    console.log(`• mean framerate: ${this._format(framerate)} fps`)
+    console.log(`• mean duration: ${this._format(duration)} seconds`)
 
     return {
       duration,
       framerate
     }
-  }
-
-  _format (number) {
-    return Math.round(number * 100) / 100
   }
 
   _getTestConfidence () {
@@ -67,16 +87,15 @@ export class TestRunner {
   }
 
   _onTestComplete () {
-    if (!this.isRunning) {
+    if (!this.isRunning()) {
       return
     }
 
     const measurements = this._framerateMeasurer.stop()
 
-    console.group(`TestRunner: test ${this._framerates.length}`)
-    console.log(`framerate: ${this._format(measurements.framerate)} fps`)
-    console.log(`duration: ${this._format(measurements.duration)} seconds`)
-    console.groupEnd()
+    console.log(`TestRunner: test ${this._framerates.length}`)
+    console.log(`• framerate: ${this._format(measurements.framerate)} fps`)
+    console.log(`• duration: ${this._format(measurements.duration)} seconds`)
 
     this._durations.push(measurements.duration)
     this._framerates.push(measurements.framerate)
@@ -84,14 +103,40 @@ export class TestRunner {
     const isConfident = this._getTestConfidence(this._framerates, this._minSampleSize)
 
     if (isConfident) {
-      this.stop()
+      const data = this._getCompletedData()
+
+      if (this._completeCallback) {
+        this._completeCallback(data)
+        this._completeCallback = null
+      }
+
+      this._resolvePromise(data)
+
+      this._rejectPromise = null
+      this._resolvePromise = null
     } else {
       this._runTest()
     }
   }
 
+  _onTestError (error) {
+    this._rejectPromise(error)
+
+    this._rejectPromise = null
+    this._resolvePromise = null
+  }
+
   _runTest () {
     this._framerateMeasurer.start()
-    this._testCase(this._onTestComplete)
+
+    // Assume the test case accepts a callback...
+    const promise = this._testCase(this._onTestComplete)
+
+    // ...unless it returns a Promise
+    if (promise instanceof Promise) {
+      promise
+        .then(this._onTestComplete)
+        .catch(this._onTestError)
+    }
   }
 }

@@ -14,8 +14,6 @@
     },
     "production": {
       "comments": false,
-      "plugins": [
-      ],
       "presets": [
         "es2015",
         "stage-0"
@@ -24,7 +22,7 @@
     "test": {
       "comments": false,
       "plugins": [
-        "__coverage__"
+        "transform-regenerator"
       ],
       "presets": [
         "es2015",

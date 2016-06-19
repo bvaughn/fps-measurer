@@ -1,3 +1,5 @@
+import raf from 'raf'
+
 /** Measures framerate for the time between start() and stop() calls */
 export class FramerateMeasurer {
   constructor () {
@@ -9,14 +11,14 @@ export class FramerateMeasurer {
   start () {
     this._beginTime = this._getTime()
     this._frames = 0
-    this._animationFrameId = requestAnimationFrame(this._loop)
+    this._animationFrameId = raf(this._loop)
   }
 
   stop () {
     const endTime = this._getTime()
 
     if (this._animationFrameId) {
-      cancelAnimationFrame(this._animationFrameId)
+      raf.cancel(this._animationFrameId)
     }
 
     const duration = (endTime - this._beginTime) / 1000
@@ -30,11 +32,15 @@ export class FramerateMeasurer {
   }
 
   _getTime () {
-    return (performance || Date).now()
+    if (typeof performance !== 'undefined') {
+      return performance.now()
+    } else {
+      return Date.now()
+    }
   }
 
   _loop () {
     this._frames++
-    this._animationFrameId = requestAnimationFrame(this._loop)
+    this._animationFrameId = raf(this._loop)
   }
 }
