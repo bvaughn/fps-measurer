@@ -1,7 +1,5 @@
 # fps-measurer
 
-Tiny testing utility for gathering FPS statistics
-
 Performance testing certain types of things (eg FPS while a user is scrolling) can be tricky.
 Manual tests yield highly variable results which in turn makes A/B comparisons unreliable.
 This utility allows you to create simple, async test cases that can be run until a confidence interval is reached (aka a reliable FPS measurement has been taken).
