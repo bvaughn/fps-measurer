@@ -11,7 +11,7 @@ npm install --save-dev fps-measurer
 ```
 UMD build:
 ```html
-<script src="https://npmcdn.com/fps-measurer/dist/umd/fps-measurer.js"></script>
+<script src="https://unpkg.com/fps-measurer/dist/umd/fps-measurer.js"></script>
 ```
 ### Usage
 Here is a basic example of how you can structure your tests:
